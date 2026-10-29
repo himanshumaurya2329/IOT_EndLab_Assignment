@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IoTShield — SDN ARP Spoofing Prevention Lab</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SLEEK FLOATING ATTACK ALERT (Quick 1.2s Toast Banner)
+  ═══════════════════════════════════════════════════════ -->
+  <div id="attackOverlay" class="attack-toast hidden">
+    <div class="attack-toast__content">
+      <div class="attack-toast__icon">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div class="attack-toast__text">
+        <div class="attack-toast__title">ARP SPOOFING DETECTED &amp; MITIGATED</div>
+        <div class="attack-toast__desc">Attacker h3 (Port 3) impersonating 10.0.0.2 &rarr; Hardware Drop Rule Installed</div>
+      </div>
+      <div class="attack-toast__badge">PREVENTED 100%</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       APP SHELL: CLEAN SPLIT-SCREEN LAYOUT
+  ═══════════════════════════════════════════════════════ -->
+  <div class="app-container">
+
+    <!-- ─── TOP NAVIGATION BAR ───────────────────────────── -->
+    <header class="topbar">
+      <div class="topbar__brand">
+        <div class="brand-logo"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="brand-info">
+          <span class="brand-name">IoTShield</span>
+          <span class="brand-sub">SDN Security Platform</span>
+        </div>
+      </div>
+
+      <div class="topbar__badges">
+        <div class="status-pill" id="stat-networkStatus">
+          <span class="badge badge--green"><i class="fa-solid fa-circle-check"></i> System Healthy</span>
+        </div>
+        <div class="status-pill" id="stat-controllerStatus">
+          <span class="badge badge--green"><i class="fa-solid fa-microchip"></i> Controller: Online (OF 1.3)</span>
+        </div>
+      </div>
+
+      <div class="topbar__actions">
+        <div class="live-pill" id="liveBadge">
+          <span class="live-dot"></span>
+          <span id="liveBadgeText">LIVE</span>
+        </div>
+        <button class="btn btn--reset" title="Wipe all past records and reset counters" onclick="window.iotshield && window.iotshield.resetLab()">
+          <i class="fa-solid fa-rotate-left"></i> Reset / Clear Data
+        </button>
+        <button class="btn btn--refresh" title="Sync with backend" onclick="window.iotshield && window.iotshield.refresh()">
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- ─── MAIN SPLIT CONTENT ───────────────────────────── -->
+    <main class="split-layout">
+
+      <!-- ═════════════════════════════════════════════════════
+           LEFT PANEL: STATS, CHART & EVENT FEED (55%)
+      ═════════════════════════════════════════════════════ -->
+      <section class="panel panel--left">
+
+        <!-- 4 Key Stat Cards Row -->
+        <div class="metrics-row">
+          <div class="stat-card">
+            <div class="stat-card__icon stat-card__icon--blue">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <div class="stat-card__data">
+              <div class="stat-card__val" id="stat-arpInspected">0</div>
+              <div class="stat-card__lbl">Packets Inspected</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-card__icon stat-card__icon--red">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="stat-card__data">
+              <div class="stat-card__val stat-card__val--red" id="stat-suspicious">0</div>
+              <div class="stat-card__lbl">Attacks Flagged</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-card__icon stat-card__icon--green">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div class="stat-card__data">
+              <div class="stat-card__val stat-card__val--green" id="stat-blocked">0</div>
+              <div class="stat-card__lbl">Packets Blocked (<span id="stat-preventionRate">100%</span>)</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-card__icon stat-card__icon--purple">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div class="stat-card__data">
+              <div class="stat-card__val" id="stat-latency">—</div>
+              <div class="stat-card__lbl">Defense Latency</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Traffic Timeline -->
+        <div class="card card--chart">
+          <div class="card__header">
+            <div class="card__title">
+              <i class="fa-solid fa-chart-line text-blue"></i> Real-Time ARP Traffic Activity
+            </div>
+            <div class="chart-legend-custom">
+              <span class="legend-item"><span class="legend-dot dot-legit"></span> Legitimate</span>
+              <span class="legend-item"><span class="legend-dot dot-malicious"></span> Attack / Blocked</span>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="trafficChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Live Security Events Feed -->
+        <div class="card card--table-feed">
+          <div class="card__header">
+            <div class="card__title">
+              <i class="fa-solid fa-list-check text-green"></i> Live Security Events Feed
+            </div>
+            <div class="table-actions">
+              <span class="badge badge--blue" id="eventCount">0 events</span>
+              <button class="btn-clear" onclick="window.dashboardModule && window.dashboardModule.clearEvents()">
+                <i class="fa-solid fa-trash-can"></i> Clear List
+              </button>
+            </div>
+          </div>
+          <div class="table-container">
+            <table class="events-table" id="eventsTable">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Source IP</th>
+                  <th>Source MAC</th>
+                  <th>Target / Reason</th>
+                  <th>SDN Action</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody id="eventsTableBody">
+                <tr class="table-empty-row" id="tableEmptyRow">
+                  <td colspan="6">
+                    <div class="table-empty">
+                      <i class="fa-solid fa-satellite-dish"></i>
+                      <span>Listening for OpenFlow events... No traffic logged yet.</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ═════════════════════════════════════════════════════
+           RIGHT PANEL: TOPOLOGY & ACTIVE HOSTS (45%)
+      ═════════════════════════════════════════════════════ -->
+      <section class="panel panel--right">
+
+        <!-- Network Topology Card -->
+        <div class="card card--topo">
+          <div class="card__header">
+            <div class="card__title">
+              <i class="fa-solid fa-network-wired text-blue"></i> SDN Network Topology &amp; Attack Vector
+            </div>
+            <div class="topo-legend">
+              <span class="legend-item"><span class="legend-dot dot-green"></span> Protected</span>
+              <span class="legend-item"><span class="legend-dot dot-red"></span> Malicious</span>
+              <span class="legend-item"><span class="legend-dot dot-blue"></span> Control Plane</span>
+            </div>
+          </div>
+          <div id="topologyContainer" class="topology-wrapper">
+            <!-- SVG rendered dynamically by topology.js -->
+          </div>
+        </div>
+
+        <!-- Trusted Bindings & Port Status Card -->
+        <div class="card card--hosts">
+          <div class="card__header">
+            <div class="card__title">
+              <i class="fa-solid fa-server text-purple"></i> SDN Host Bindings &amp; Enforcement Table
+            </div>
+            <span class="badge badge--purple">OpenFlow 1.3 Table 0</span>
+          </div>
+          <div class="table-container">
+            <table class="hosts-table">
+              <thead>
+                <tr>
+                  <th>Host</th>
+                  <th>IP Address</th>
+                  <th>Authorized MAC</th>
+                  <th>OVS Port</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr id="hostRow-h1">
+                  <td><strong>h1</strong></td>
+                  <td><code>10.0.0.1</code></td>
+                  <td><code>00:00:00:00:00:01</code></td>
+                  <td>Port 1</td>
+                  <td>IoT Sensor</td>
+                  <td><span class="badge badge--green"><i class="fa-solid fa-check"></i> PROTECTED</span></td>
+                </tr>
+                <tr id="hostRow-h2">
+                  <td><strong>h2</strong></td>
+                  <td><code>10.0.0.2</code></td>
+                  <td><code>00:00:00:00:00:02</code></td>
+                  <td>Port 2</td>
+                  <td>Trusted Server</td>
+                  <td><span class="badge badge--green"><i class="fa-solid fa-check"></i> PROTECTED</span></td>
+                </tr>
+                <tr id="hostRow-h3">
+                  <td><strong>h3</strong></td>
+                  <td><code>10.0.0.3</code></td>
+                  <td><code>00:00:00:00:00:03</code></td>
+                  <td>Port 3</td>
+                  <td>Untrusted Host</td>
+                  <td id="hostStatus-h3"><span class="badge badge--gray">NORMAL</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- ─── FOOTER BAR ───────────────────────────────────── -->
+    <footer class="footer">
+      <div class="footer__item">
+        <i class="fa-solid fa-code"></i> <span>IoTShield v2.0 &bull; OpenFlow 1.3 / Ryu Controller / OVS</span>
+      </div>
+      <div class="footer__item" id="footerClock">
+        <!-- Live clock -->
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       LOADING SCREEN
+  ═══════════════════════════════════════════════════════ -->
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loading-screen__inner">
+      <div class="loading-screen__logo"><i class="fa-solid fa-shield-halved"></i></div>
+      <div class="loading-screen__name">IoTShield</div>
+      <div class="loading-screen__sub">Initializing SDN Security Dashboard...</div>
+      <div class="loading-screen__bar">
+        <div class="loading-screen__fill" id="loadingFill"></div>
+      </div>
+      <div class="loading-screen__status" id="loadingStatus">Connecting to backend...</div>
+    </div>
+  </div>
+
+  <!-- ─── SCRIPTS ──────────────────────────────────────── -->
+  <script src="js/charts.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/topology.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.iotshield = new IoTShieldApp();
+      window.iotshield.init();
+    });
+  </script>
+</body>
+</html>

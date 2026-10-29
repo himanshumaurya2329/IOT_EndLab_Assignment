@@ -1,0 +1,35 @@
+{
+  "controller": {
+    "host": "127.0.0.1",
+    "openflow_port": 6633,
+    "api_port": 8080
+  },
+  "backend": {
+    "host": "0.0.0.0",
+    "port": 5000,
+    "debug": false,
+    "allowed_control_origins": ["127.0.0.1", "::1"]
+  },
+  "topology": {
+    "switch_name": "s1",
+    "controller_ip": "127.0.0.1",
+    "controller_port": 6633,
+    "openflow_version": "OpenFlow13",
+    "hosts": [
+      {"name": "h1", "ip": "10.0.0.1/24", "mac": "00:00:00:00:00:01"},
+      {"name": "h2", "ip": "10.0.0.2/24", "mac": "00:00:00:00:00:02"},
+      {"name": "h3", "ip": "10.0.0.3/24", "mac": "00:00:00:00:00:03"}
+    ]
+  },
+  "logging": {
+    "level": "INFO",
+    "event_log_file": "/tmp/iotshield_events.jsonl",
+    "controller_log_file": "/tmp/iotshield_controller.log"
+  },
+  "metrics": {
+    "ping_count": 5,
+    "ping_interval": 0.2,
+    "results_dir": "results"
+  }
+}
+

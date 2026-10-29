@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IoTShield — Academic Lab Project Manual</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0f172a;
+      --accent: #0284c7;
+      --accent-dark: #0369a1;
+      --success: #15803d;
+      --danger: #b91c1c;
+      --warning: #b45309;
+      --border: #e2e8f0;
+      --bg-alt: #f8fafc;
+      --text: #1e293b;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--text);
+      line-height: 1.55;
+      background: #f1f5f9;
+      font-size: 13.5px;
+    }
+
+    .no-print-bar {
+      background: #0f172a;
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .no-print-bar h2 {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-print {
+      background: #0284c7;
+      color: #fff;
+      border: none;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .btn-print:hover {
+      background: #0369a1;
+    }
+
+    .page-container {
+      max-width: 860px;
+      margin: 24px auto;
+      background: #fff;
+      padding: 48px 56px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      border-radius: 8px;
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: #fff;
+        font-size: 11pt;
+      }
+      .no-print-bar {
+        display: none !important;
+      }
+      .page-container {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      @page {
+        size: A4;
+        margin: 16mm 14mm 16mm 14mm;
+      }
+    }
+
+    /* Header styling */
+    header.doc-header {
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+
+    .badge-label {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    h1.project-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+
+    .project-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    h2.section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+      margin: 28px 0 14px 0;
+    }
+
+    h3.sub-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #334155;
+      margin: 16px 0 8px 0;
+    }
+
+    p {
+      margin-bottom: 10px;
+    }
+
+    /* Tables */
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 18px 0;
+      font-size: 12px;
+    }
+
+    table.data-table th, table.data-table td {
+      border: 1px solid var(--border);
+      padding: 7px 10px;
+      text-align: left;
+    }
+
+    table.data-table th {
+      background: var(--bg-alt);
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    table.data-table tr:nth-child(even) {
+      background: #fafbfc;
+    }
+
+    /* Code boxes */
+    pre, code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    code {
+      font-size: 12px;
+      background: #f1f5f9;
+      padding: 2px 5px;
+      border-radius: 3px;
+      color: #0f172a;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 12px 14px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      line-height: 1.45;
+      margin: 10px 0 14px 0;
+      overflow-x: auto;
+    }
+
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+
+    /* Boxes */
+    .info-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 12px 0 16px 0;
+    }
+
+    .alert-card {
+      border-left: 4px solid var(--danger);
+      background: #fef2f2;
+      padding: 10px 14px;
+      border-radius: 4px;
+      margin: 10px 0;
+      color: #991b1b;
+      font-size: 12.5px;
+    }
+
+    .success-card {
+      border-left: 4px solid var(--success);
+      background: #f0fdf4;
+      padding: 10px 14px;
+      border-radius: 4px;
+      margin: 10px 0;
+      color: #166534;
+      font-size: 12.5px;
+    }
+
+    /* Diagram flow */
+    .flow-diagram {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 6px;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.4;
+      margin: 12px 0 18px 0;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    /* Q&A section */
+    .qa-item {
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+
+    .qa-question {
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    .qa-answer {
+      color: #334155;
+      font-size: 12.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="no-print-bar">
+    <div>
+      <h2>IoTShield: SDN Security Lab Manual (Ready to Print)</h2>
+      <span style="font-size: 11px; color: #94a3b8;">Formatted specifically for standard A4 Sheet Printout / PDF Export</span>
+    </div>
+    <button class="btn-print" onclick="window.print()">
+      <span>🖨️ Print to A4 / Save as PDF</span>
+    </button>
+  </div>
+
+  <div class="page-container">
+
+    <!-- ─── HEADER ─────────────────────────────────────────────────────────── -->
+    <header class="doc-header">
+      <span class="badge-label">Academic Lab End-Semester Project Report</span>
+      <h1 class="project-title">IoTShield: SDN-Based ARP Spoofing Detection and Man-in-the-Middle Attack Prevention in IoT Networks</h1>
+      <div class="project-meta">
+        Target: Ubuntu on WSL 2 &bull; OpenFlow 1.3 &bull; Ryu Controller &bull; Mininet &bull; Open vSwitch &bull; Flask
+      </div>
+    </header>
+
+    <!-- ─── 1. ARCHITECTURE & TECH STACK ───────────────────────────────────── -->
+    <h2 class="section-title">1. Technology Stack &amp; Purpose of Each Tool</h2>
+    <p>The project follows an SDN architecture strictly separating the Control Plane (intelligence) and Data Plane (wire-speed switching):</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Technology</th>
+          <th>Domain</th>
+          <th>Purpose in IoTShield</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Python 3.12</strong></td>
+          <td>Language</td>
+          <td>Underpins the Ryu controller application, Flask API, Scapy attack script, and automated tests.</td>
+        </tr>
+        <tr>
+          <td><strong>Ryu SDN Controller</strong></td>
+          <td>Control Plane</td>
+          <td>Event-driven OpenFlow controller. Inspects ARP/ICMP packets, validates truth table, and issues flow rules.</td>
+        </tr>
+        <tr>
+          <td><strong>Open vSwitch (OVS)</strong></td>
+          <td>Data Plane</td>
+          <td>Software virtual switch running in the Linux kernel. Executes forwarding and hardware drop rules at wire-speed.</td>
+        </tr>
+        <tr>
+          <td><strong>Mininet (2.3.0)</strong></td>
+          <td>Network Emulator</td>
+          <td>Creates the virtual IoT topology (h1, h2, h3, s1) using native Linux network namespaces and virtual ethernet links.</td>
+        </tr>
+        <tr>
+          <td><strong>OpenFlow 1.3</strong></td>
+          <td>SDN Protocol</td>
+          <td>Standardized protocol connecting OVS and Ryu over TCP port 6633 for Packet-In and Flow-Mod messages.</td>
+        </tr>
+        <tr>
+          <td><strong>Scapy (2.5.0)</strong></td>
+          <td>Packet Crafting</td>
+          <td>Generates controlled, customized spoofed ARP replies inside the attacker namespace for realistic attack demo.</td>
+        </tr>
+        <tr>
+          <td><strong>Flask &amp; SSE</strong></td>
+          <td>Backend Server</td>
+          <td>Tails the controller event log and pushes real-time events to the web browser over Server-Sent Events (SSE).</td>
+        </tr>
+        <tr>
+          <td><strong>SVG &amp; Chart.js</strong></td>
+          <td>Frontend UI</td>
+          <td>Renders a live dark-themed SOC dashboard with packet animations and real-time traffic activity charts.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-card">
+      <strong>Is Docker used in this project? &mdash; NO.</strong><br/>
+      Docker was deliberately avoided because Mininet requires deep Linux kernel capabilities (network namespaces, <code>veth</code> pairs, and Open vSwitch kernel module <code>openvswitch.ko</code>). Running Mininet in Docker requires fragile <code>--privileged</code> container flags. Because this system runs on <strong>Ubuntu on WSL 2</strong>, native Linux execution provides superior speed, stability, zero container overhead, and direct <code>localhost:5000</code> browser access.
+    </div>
+
+    <!-- ─── 2. RUNNING THE LAB (3 TERMINALS) ─────────────────────────────────── -->
+    <h2 class="section-title">2. Step-by-Step Lab Execution (3-Terminal Setup)</h2>
+    <p>Open 3 terminal windows in Ubuntu (WSL 2) for the complete live evaluator presentation:</p>
+
+    <div class="flow-diagram">┌────────────────────────────────────────────────────────┐
+│ Terminal 1: Mininet CLI (Startup & Commands)           │
+│ $ cd .../iotshield && sudo bash scripts/start_lab.sh   │
+└────────────────────────────────────────────────────────┘
+┌─────────────────────────────────┐ ┌──────────────────────────────────┐
+│ Terminal 2: Ryu Controller Log  │ │ Terminal 3: Security Monitor     │
+│ $ python3 scripts/watch_ryu.py  │ │ $ python3 scripts/watch_events.py│
+└─────────────────────────────────┘ └──────────────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│ Web Browser: http://localhost:5000 (SOC Dashboard)     │
+└────────────────────────────────────────────────────────┘</div>
+
+    <h3 class="sub-title">Terminal Commands to Demonstrate to Evaluator:</h3>
+    <ol style="margin-left: 20px; line-height: 1.8;">
+      <li><strong>Normal Traffic Test:</strong>
+        <pre><code>mininet> h1 ping -c 3 h2</code></pre>
+        <em>Result:</em> 0% packet loss. Web UI animates green packets <code>h1 &rarr; s1 &rarr; h2</code>. Terminal 2 &amp; 3 log <code>🟢 SAFE ICMP</code>.
+      </li>
+      <li><strong>Launch ARP Spoofing Attack:</strong>
+        <pre><code>mininet> h3 python3 attacks/arp_spoof.py --count 10</code></pre>
+        <em>Result:</em> Ryu detects MAC mismatch on Port 3. Ryu drops rogue packet and installs hardware DROP rule (priority 200). Terminal 2 &amp; 3 print red alert. Web UI shows 1.2s toast and flags <code>h3</code> as QUARANTINED.
+      </li>
+      <li><strong>Verify Attacker Isolation:</strong>
+        <pre><code>mininet> h1 ping -c 3 h2</code></pre>
+        <em>Result:</em> 0% packet loss. Legitimate IoT communication is completely unaffected while attacker is quarantined.
+      </li>
+      <li><strong>Instant Reset for Re-Demo:</strong>
+        Click <strong>"Reset / Clear Data"</strong> in the top-right of the Web UI (or run <code>sudo bash scripts/reset_lab.sh</code>). OVS drop rules are cleared, host ARP caches flushed, and UI resets to 0 without restarting Mininet!
+      </li>
+    </ol>
+
+    <div class="page-break"></div>
+
+    <!-- ─── 3. WORKFLOW DIAGRAMS ────────────────────────────────────────────── -->
+    <h2 class="section-title">3. Packet Workflow Diagrams</h2>
+
+    <h3 class="sub-title">3.1 Legitimate ARP &amp; ICMP Data Flow:</h3>
+    <div class="flow-diagram">h1 (Sensor)             Switch s1 (OVS)         Ryu Controller         h2 (Server)
+    │                          │                         │                    │
+    ├──── 1. ARP Request ─────►│                         │                    │
+    │     (Who has 10.0.0.2?)  ├──── 2. Packet-In ──────►│                    │
+    │                          │     (Priority 0)        │ [Check Binding:    │
+    │                          │                         │  10.0.0.1=MAC1 ✓]  │
+    │                          │◄─── 3. Packet-Out ──────┤                    │
+    │                          │     (Flood ARP)         │                    │
+    │                          ├──────────────── 4. Deliver ARP ─────────────►│
+    │                          │                                              │
+    │                          │◄─────────────── 5. ARP Reply ────────────────┤
+    │                          ├──── 6. Packet-In ──────►│                    │
+    │                          │◄─── 7. Packet-Out ──────┤                    │
+    │◄─── 8. Deliver Reply ────┤                         │                    │
+    │ [ARP Cache: 10.0.0.2=MAC2]                         │                    │
+    │                          │                         │                    │
+    ├──── 9. ICMP Ping ───────►│                         │                    │
+    │                          ├──── 10. Packet-In ─────►│ [Install Rule:     │
+    │                          │◄─── 11. Flow-Mod ───────┤  Prio 100, Port 2] │
+    │                          │◄─── 12. Packet-Out ─────┤                    │
+    │                          ├──────────────── 13. Deliver ICMP ───────────►│
+    │                          │                                              │
+    │     Subsequent Pings 2..10 are switched directly by OVS at line-rate!   │</div>
+
+    <h3 class="sub-title">3.2 Attack Detection &amp; Mitigation Flow:</h3>
+    <div class="flow-diagram">h3 (Attacker)           Switch s1 (OVS)         Ryu Controller         h1 (Victim)
+    │                          │                         │                    │
+    ├──── 1. Fake ARP Reply ──►│                         │                    │
+    │   "10.0.0.2 is at MAC3"  ├──── 2. Packet-In ──────►│                    │
+    │                          │     (From Port 3)       │ [Check Binding:    │
+    │                          │                         │  10.0.0.2!=MAC3!   │
+    │                          │                         │  MISMATCH FLAG]    │
+    │                          │                         │                    │
+    │                          │                         │ ① DROP Current Pkt │
+    │                          │                         │ ② Log Alert JSONL  │
+    │                          │                         │ ③ Install Rule:    │
+    │                          │◄─── 3. Flow-Mod ────────┤   Prio 200, DROP]  │
+    │                          │     (Drop Rule Prio 200)│                    │
+    │                          │                         │                    │
+    │  Fake ARP is NEVER forwarded! h1's ARP cache remains completely clean!  │
+    │  Packets 2..10 from h3 are dropped immediately in OVS hardware table 0! │</div>
+
+    <!-- ─── 4. HINGLISH VIVA DOUBTS & Q&A ───────────────────────────────────── -->
+    <h2 class="section-title">4. Hinglish Q&amp;A &amp; Evaluator Viva Doubts Guide</h2>
+
+    <div class="qa-item">
+      <div class="qa-question">Q1: UI me "Packets Inspected" count ka kya matlab hai?</div>
+      <div class="qa-answer">
+        <strong>Ans:</strong> Iska matlab hai ki <strong>SDN Controller (Ryu) ne kitne packets ko apne paas receive karke security policy check kiya</strong>. Isme valid packets (jaise legitimate ARP aur ICMP request) aur attack packets (h3 ke spoofed ARP) dono count hote hain.<br/>
+        <em>Formula:</em> <code>Packets Inspected = Legitimate Packets + Blocked / Attack Packets</code>.
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-question">Q2: Jab hum `h1 ping -c 10 h2` karte hain, toh pehli baar count 4 kyun badhta hai aur 10 kyun nahi?</div>
+      <div class="qa-answer">
+        <strong>Ans:</strong> Yeh <strong>SDN ka core separation principle</strong> hai:
+        <ul style="margin: 4px 0 4px 18px;">
+          <li><strong>Packet 1 &amp; 2 (ARP Request &amp; Reply):</strong> IP se MAC dhoondhne ke liye controller ke paas gaye &rarr; <strong>Count = 2</strong>.</li>
+          <li><strong>Packet 3 &amp; 4 (ICMP Ping #1 Request &amp; Reply):</strong> Switch ke paas rule nahi tha, isliye pehla ping controller ke paas gaya &rarr; <strong>Count = 4</strong>. Controller ne switch me forwarding rule daal diya (port 1 &harr; port 2).</li>
+          <li><strong>Baki ke 8 packets kahan gaye?</strong> Rule install hone ke baad packets 2 se 10 tak direct <strong>OVS switch ke hardware/kernel level par microsecond speed (0.07 ms)</strong> par deliver ho gaye! Controller par baar-baar load nahi dala jata.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-question">Q3: Pehle 10 ping ke baad jab dobara ping karte hain, toh count sirf 2 kyun badhta hai?</div>
+      <div class="qa-answer">
+        <strong>Ans:</strong> Kyunki is baar <strong>ARP resolution dobara nahi karni padi</strong>. Host <code>h1</code> ke paas <code>h2</code> ka MAC address pehle se yaad tha, isliye usne ARP nahi bheja. Switch ka 5s idle_timeout rule expire hone ke baad sirf <strong>1 ICMP Request + 1 ICMP Reply</strong> controller ke paas gaye (Count = 2).
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-question">Q4: ARP aur ICMP me kya farak hai aur 1 ping bhejne par kya hota hai?</div>
+      <div class="qa-answer">
+        <strong>Ans:</strong>
+        <ul style="margin: 4px 0 4px 18px;">
+          <li><strong>ARP (Layer 2):</strong> Pata dhoondhta hai &mdash; IP address se hardware MAC address nikalta hai.</li>
+          <li><strong>ICMP (Layer 3):</strong> Message/Ping bhejta hai &mdash; Network connectivity test karta hai.</li>
+          <li><em>1 Ping par total 4 steps hote hain:</em> Pehle ARP Request &rarr; ARP Reply (rasta mil gaya), phir ICMP Echo Request &rarr; ICMP Echo Reply (ping successful).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-question">Q5: `idle_timeout = 5 seconds` ka kya matlab hai?</div>
+      <div class="qa-answer">
+        <strong>Ans:</strong> Yeh switch ka <strong>Inactivity Timer</strong> hai. Agar lagataar packet aa rahe hain toh rule rehta hai, lekin jaise hi 5 second tak koi packet nahi aata, switch us rule ko automatically delete kar deta hai taaki switch ki memory bache aur agle packet par Controller dobara security re-verify kar sake.
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-question">Q6: Agar switch se rule delete ho gaya, toh dobara ARP kyun nahi hota?</div>
+      <div class="qa-answer">
+        <strong>Ans:</strong> Kyunki <strong>Switch ki memory (Flow Table)</strong> aur <strong>Host ki memory (OS ARP Cache)</strong> alag hoti hain. Switch ne rasta bhulaya, lekin host <code>h1</code> ke Linux OS ki diary me <code>h2</code> ka MAC address pehle se yaad tha, isliye usne dobara ARP nahi manga.
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-question">Q7: Attack block hone ke baad agar evaluator ko dobara attack dikhana ho, toh kya poora project restart karna padega?</div>
+      <div class="qa-answer">
+        <strong>Ans:</strong> <strong>Bilkul nahi!</strong> Sirf UI ke top-right me <strong>"Reset / Clear Data"</strong> button click karein. Yeh OVS switch se drop rules delete karta hai, hosts ka ARP cache flush karta hai, aur counters 0 kar deta hai bina project restart kiye.
+      </div>
+    </div>
+
+    <!-- ─── 5. TECHNICAL VIVA QA ────────────────────────────────────────────── -->
+    <h2 class="section-title">5. Core Technical Viva Questions (English)</h2>
+
+    <div class="qa-item">
+      <div class="qa-question">Q: Why is the drop rule priority 200 while forwarding rules are priority 100?</div>
+      <div class="qa-answer">
+        <strong>Ans:</strong> OpenFlow switches evaluate flow rules strictly by descending priority. If a drop rule (priority 200) and a forwarding rule (priority 100) both match a packet, the drop rule wins. Security isolation rules must always supersede operational forwarding rules.
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-question">Q: What happens if an unknown host connects to the network?</div>
+      <div class="qa-answer">
+        <strong>Ans:</strong> If an ARP packet arrives with an IP not present in <code>trusted_bindings.json</code>, the controller flags it as <code>ARP_UNKNOWN_SENDER</code>. By default, it logs a warning and does not auto-trust the host, preventing rogue devices from joining unauthenticated.
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="qa-question">Q: How does Server-Sent Events (SSE) compare to WebSockets for this lab?</div>
+      <div class="qa-answer">
+        <strong>Ans:</strong> SSE is a lightweight, unidirectional server-to-browser push protocol running over standard HTTP (<code>text/event-stream</code>). Since security event logs only need to flow from the SDN backend to the browser, SSE provides automatic reconnection, simpler architecture, and zero WebSocket protocol overhead.
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
+

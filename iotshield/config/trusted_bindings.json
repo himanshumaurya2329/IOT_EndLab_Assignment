@@ -1,0 +1,35 @@
+{
+  "_comment": "Trusted IP-MAC-Port bindings for IoTShield ARP spoofing detection.",
+  "_note": "port refers to the OVS switch port number the host is physically connected to.",
+  "bindings": [
+    {
+      "host": "h1",
+      "role": "IoT Sensor / Victim",
+      "ip": "10.0.0.1",
+      "mac": "00:00:00:00:00:01",
+      "port": 1
+    },
+    {
+      "host": "h2",
+      "role": "Trusted Server",
+      "ip": "10.0.0.2",
+      "mac": "00:00:00:00:00:02",
+      "port": 2
+    },
+    {
+      "host": "h3",
+      "role": "Compromised Host / Attacker",
+      "ip": "10.0.0.3",
+      "mac": "00:00:00:00:00:03",
+      "port": 3
+    }
+  ],
+  "policy": {
+    "unknown_sender": "warn",
+    "mismatch_action": "drop_and_block",
+    "port_mismatch_action": "warn_and_log",
+    "block_duration_seconds": 300,
+    "auto_trust_unknown": false
+  }
+}
+

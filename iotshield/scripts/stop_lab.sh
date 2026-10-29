@@ -62,6 +62,8 @@ fi
 
 # Stop Ryu
 _stop_by_pid "ryu"
+fuser -k 6633/tcp 2>/dev/null || true
+fuser -k 5000/tcp 2>/dev/null || true
 
 echo
 echo "======================================================"

@@ -66,6 +66,10 @@ sudo apt-get install -y \
     python3-pip \
     python3-venv \
     python3-dev \
+    python3-scapy \
+    python3-flask \
+    python3-requests \
+    python3-pytest \
     net-tools \
     iproute2 \
     iputils-ping \
@@ -113,7 +117,7 @@ If you prefer full manual control:
 
 #### 1. (Optional) Create and Activate Virtual Environment
 ```bash
-python3 -m venv venv
+python3 -m venv --system-site-packages venv
 source venv/bin/activate
 pip install --upgrade pip setuptools wheel
 ```
@@ -272,3 +276,4 @@ mininet> h1 ping -c 3 h2
 | `Permission denied` | Mininet / OVS requires root | Prepend `sudo` to scripts (`sudo bash scripts/start_lab.sh`) |
 | `100% packet loss` after reset | Table-miss rule missing | Run `sudo bash scripts/reset_lab.sh` which restores `priority=0,actions=controller` |
 | `externally-managed-environment` | Python 3.12 PEP 668 restriction | Use `python3 -m venv venv && source venv/bin/activate` or pass `--break-system-packages` to pip |
+

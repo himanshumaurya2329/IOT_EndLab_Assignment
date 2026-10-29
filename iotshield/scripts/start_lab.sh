@@ -29,10 +29,25 @@ else
     PYTHON="python3"
 fi
 
+# If running as root via sudo, inherit user site-packages if installed under ~/.local
+if [ -n "${SUDO_USER:-}" ] && [ -d "/home/$SUDO_USER/.local/lib" ]; then
+    USER_SITE=$(find "/home/$SUDO_USER/.local/lib" -maxdepth 2 -type d -name "site-packages" 2>/dev/null | tr '\n' ':' || true)
+    if [ -n "$USER_SITE" ]; then
+        export PYTHONPATH="${USER_SITE}${PYTHONPATH:-}"
+    fi
+fi
+
+# ── Locate Ryu Manager ────────────────────────────────────────────────────────
 if [ -f "$VENV_RYU" ]; then
     RYU="$VENV_RYU"
 elif command -v ryu-manager &>/dev/null; then
     RYU="$(which ryu-manager)"
+elif [ -f "/usr/local/bin/ryu-manager" ]; then
+    RYU="/usr/local/bin/ryu-manager"
+elif [ -n "${SUDO_USER:-}" ] && [ -f "/home/$SUDO_USER/.local/bin/ryu-manager" ]; then
+    RYU="/home/$SUDO_USER/.local/bin/ryu-manager"
+elif [ -f "$HOME/.local/bin/ryu-manager" ]; then
+    RYU="$HOME/.local/bin/ryu-manager"
 else
     RYU=""
 fi
@@ -89,6 +104,7 @@ fi
 
 if ! ovs-vsctl show &>/dev/null 2>&1; then
     echo "[INFO] Starting OVS service..."
+    systemctl start openvswitch-switch 2>/dev/null || \
     service openvswitch-switch start 2>/dev/null || \
         /usr/share/openvswitch/scripts/ovs-ctl start 2>/dev/null || \
         ovsdb-server --remote=punix:/var/run/openvswitch/db.sock \
@@ -126,7 +142,8 @@ if [ -z "$RYU" ]; then
     exit 1
 fi
 
-# Kill any existing Ryu
+# Kill any existing Ryu or stale process on port 6633
+fuser -k 6633/tcp 2>/dev/null || true
 if [ -f /tmp/iotshield_ryu.pid ]; then
     OLD_PID=$(cat /tmp/iotshield_ryu.pid 2>/dev/null || echo "")
     if [ -n "$OLD_PID" ] && kill -0 "$OLD_PID" 2>/dev/null; then
@@ -161,7 +178,8 @@ done
 echo
 echo "── Step 4: Starting dashboard backend ───────────────"
 
-# Kill any existing backend
+# Kill any existing backend or stale process on port 5000
+fuser -k 5000/tcp 2>/dev/null || true
 if [ -f /tmp/iotshield_backend.pid ]; then
     OLD_BACKEND_PID=$(cat /tmp/iotshield_backend.pid 2>/dev/null || echo "")
     if [ -n "$OLD_BACKEND_PID" ] && kill -0 "$OLD_BACKEND_PID" 2>/dev/null; then

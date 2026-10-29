@@ -44,6 +44,10 @@ SYSTEM_PACKAGES=(
     python3-pip
     python3-venv
     python3-dev
+    python3-scapy
+    python3-flask
+    python3-requests
+    python3-pytest
     net-tools
     iproute2
     iputils-ping
@@ -75,28 +79,35 @@ fi
 
 # ── Python Packages Check & Installation ──────────────────────────────
 echo
-echo "── Python Packages ──────────────────────────────────"
+echo "── Python Packages & Virtual Environment ───────────"
 
-if python3 -c "import flask, scapy, eventlet, ryu" 2>/dev/null; then
-    echo "  [OK] Critical dependencies (flask, scapy, eventlet, ryu) already installed and importable."
-else
-    echo "[INFO] Installing Python packages..."
-    pip3 install --break-system-packages --quiet \
-        "flask>=2.3,<4.0" \
-        "flask-cors>=4.0" \
-        "eventlet>=0.35" \
-        "dnspython>=2.0" \
-        "scapy>=2.5" \
-        "pytest>=7.0" \
-        "requests>=2.28" || true
+# Always create project venv with system site-packages if missing
+if [ ! -d "$VENV_DIR" ]; then
+    echo "[INFO] Creating project venv with system site-packages..."
+    python3 -m venv --system-site-packages "$VENV_DIR" || true
+fi
 
+if [ -f "$VENV_DIR/bin/pip" ]; then
+    echo "[INFO] Upgrading pip/setuptools/wheel in venv..."
+    "$VENV_DIR/bin/pip" install --upgrade --quiet pip setuptools wheel 2>/dev/null || true
+    echo "[INFO] Installing required dependencies in venv..."
+    "$VENV_DIR/bin/pip" install --quiet "eventlet>=0.35.2" "dnspython>=2.0" "flask-cors>=4.0" "scapy>=2.5" "pytest>=7.0" "requests>=2.28" || true
+    if ! "$VENV_DIR/bin/python" -c "import ryu" 2>/dev/null; then
+        echo "[INFO] Installing ryu in venv without build isolation..."
+        "$VENV_DIR/bin/pip" install --quiet --no-build-isolation ryu || true
+    fi
+fi
+
+# Also attempt global/system-wide install for fallback
+if ! python3 -c "import ryu" 2>/dev/null; then
+    echo "[INFO] Installing ryu globally (for sudo/system access)..."
+    sudo pip3 install --break-system-packages --quiet --no-build-isolation ryu 2>/dev/null || true
     if ! python3 -c "import ryu" 2>/dev/null; then
-        echo "[INFO] Installing ryu SDN framework..."
         cd /tmp && rm -rf ryu
         git clone --depth 1 https://github.com/faucetsdn/ryu.git && cd ryu
         sed -i 's/ryu\.hooks\.save_orig/#ryu.hooks.save_orig/g' setup.py
         sed -i 's/ryu\.hooks\.restore_orig/#ryu.hooks.restore_orig/g' setup.py
-        pip3 install --break-system-packages --ignore-installed . || true
+        sudo pip3 install --break-system-packages --ignore-installed . 2>/dev/null || true
         cd "$PROJECT_ROOT"
     fi
 fi
@@ -141,6 +152,9 @@ fi
 # ── Create results directory ──────────────────────────────────────────────────
 mkdir -p "$PROJECT_ROOT/results"
 touch "$PROJECT_ROOT/results/.gitkeep"
+
+# ── Set executable permissions ───────────────────────────────────────────────
+chmod +x "$PROJECT_ROOT/scripts"/*.sh 2>/dev/null || true
 
 # ── Summary ───────────────────────────────────────────────────────────────────
 echo

@@ -25,6 +25,12 @@ import sys
 import time
 from pathlib import Path
 
+# Ensure system site-packages (/usr/lib/python3/dist-packages) are accessible
+# in case the user activated a virtual environment without --system-site-packages
+for _p in ("/usr/lib/python3/dist-packages", "/usr/local/lib/python3/dist-packages"):
+    if os.path.exists(_p) and _p not in sys.path:
+        sys.path.append(_p)
+
 # Mininet imports — only available inside Linux lab
 from mininet.log import setLogLevel, info, error
 from mininet.net import Mininet

@@ -14,9 +14,9 @@
 ## Pre-Experiment Setup
 
 ```bash
-# 1. Open Ubuntu WSL2
+# 1. Open Linux terminal or Ubuntu WSL2
 # 2. Navigate to project
-cd /mnt/c/Users/hmury/Desktop/IOT_EndLab_Assignment/iotshield
+cd /path/to/IOT_EndLab_Assignment/iotshield
 
 # 3. Activate venv
 source venv/bin/activate
@@ -94,7 +94,7 @@ tail -f /tmp/iotshield_events.jsonl
 
 **Terminal 1 (Mininet CLI) — Run attack:**
 ```
-mininet> h3 python3 /mnt/c/.../iotshield/attacks/arp_spoof.py --count 10 --interval 0.5
+mininet> h3 python3 attacks/arp_spoof.py --count 10 --interval 0.5
 ```
 
 Or from Terminal 2:

@@ -7,19 +7,56 @@
 
 ## Table of Contents
 
-1. [Quick Start & Demo Guide (3-Terminal Setup)](#1-quick-start--demo-guide-3-terminal-setup)
-2. [Commands Reference](#2-commands-reference)
-3. [Technology Stack & Role of Each Tool](#3-technology-stack--role-of-each-tool)
-4. [Is Docker Used in this Project? (Why / Why Not?)](#4-is-docker-used-in-this-project-why--why-not)
-5. [System Architecture & Workflow Diagrams](#5-system-architecture--workflow-diagrams)
-6. [Hinglish Q&A & Viva Doubts Guide](#6-hinglish-qa--viva-doubts-guide)
-7. [Reset / Clear Data Mechanism](#7-reset--clear-data-mechanism)
-8. [Folder Structure](#8-folder-structure)
-9. [Detailed Technical Viva Q&A (English)](#9-detailed-technical-viva-qa-english)
+1. [Setup from Scratch (Fresh Clone / Installation Guide)](#1-setup-from-scratch-fresh-clone--installation-guide)
+2. [Quick Start & Demo Guide (3-Terminal Setup)](#2-quick-start--demo-guide-3-terminal-setup)
+3. [Commands Reference](#3-commands-reference)
+4. [Technology Stack & Role of Each Tool](#4-technology-stack--role-of-each-tool)
+5. [Is Docker Used in this Project? (Why / Why Not?)](#5-is-docker-used-in-this-project-why--why-not)
+6. [System Architecture & Workflow Diagrams](#6-system-architecture--workflow-diagrams)
+7. [Hinglish Q&A & Viva Doubts Guide](#7-hinglish-qa--viva-doubts-guide)
+8. [Reset / Clear Data Mechanism](#8-reset--clear-data-mechanism)
+9. [Folder Structure](#9-folder-structure)
+10. [Detailed Technical Viva Q&A (English)](#10-detailed-technical-viva-qa-english)
 
 ---
 
-## 1. Quick Start & Demo Guide (3-Terminal Setup)
+## 1. Setup from Scratch (Fresh Clone / Installation Guide)
+
+> 📘 **Full Step-by-Step Documentation:** See [`docs/README.md`](docs/README.md) for the complete handbook, OS prerequisites, and detailed troubleshooting.
+
+If you have just cloned this repository or are setting it up on a new machine (Linux Ubuntu 22.04/24.04 or Windows WSL 2):
+
+### Step 1: Clone and Enter the Project Directory
+```bash
+git clone https://github.com/himanshumaurya2329/IOT_EndLab_Assignment.git
+cd IOT_EndLab_Assignment/iotshield
+```
+
+### Step 2: Install System Dependencies & Open vSwitch
+Run inside Ubuntu/WSL 2:
+```bash
+sudo apt-get update
+sudo apt-get install -y mininet openvswitch-switch openvswitch-common python3 python3-pip python3-venv python3-dev net-tools iproute2 iputils-ping tcpdump curl git
+sudo service openvswitch-switch start
+```
+
+### Step 3: Automated One-Click Installation
+Execute the automated installer script:
+```bash
+bash scripts/install.sh
+```
+*What this script does:* Installs Python dependencies (`Flask`, `Scapy`, `pytest`, `eventlet`), installs patched `Ryu` SDN controller with build-isolation fixes for Python 3.12, verifies all critical imports, and creates the results folder.
+
+### Step 4: Verify Installation with Test Suite
+Before starting the network emulator, confirm all controller modules and security logic pass the unit tests:
+```bash
+python3 -m pytest tests/ -v
+```
+You should see: `59 passed in ~0.50s`.
+
+---
+
+## 2. Quick Start & Demo Guide (3-Terminal Setup)
 
 For the best live demonstration experience in front of the evaluator, open **3 terminal tabs/windows in Ubuntu (WSL 2)**:
 
@@ -61,7 +98,7 @@ Open on Windows: **`http://localhost:5000`**
 
 ---
 
-## 2. Commands Reference
+## 3. Commands Reference
 
 All commands are run directly inside **Terminal 1 (`mininet>` prompt)**:
 
@@ -105,7 +142,7 @@ sudo bash scripts/reset_lab.sh
 
 ---
 
-## 3. Technology Stack & Role of Each Tool
+## 4. Technology Stack & Role of Each Tool
 
 | Technology | Category | Role in IoTShield |
 |:---|:---|:---|
@@ -122,7 +159,7 @@ sudo bash scripts/reset_lab.sh
 
 ---
 
-## 4. Is Docker Used in this Project? (Why / Why Not?)
+## 5. Is Docker Used in this Project? (Why / Why Not?)
 
 ### **Answer: NO, Docker is NOT used in this project.**
 
@@ -138,7 +175,7 @@ sudo bash scripts/reset_lab.sh
 
 ---
 
-## 5. System Architecture & Workflow Diagrams
+## 6. System Architecture & Workflow Diagrams
 
 ### 5.1 High-Level Architecture
 
@@ -225,7 +262,7 @@ sequenceDiagram
 
 ---
 
-## 6. Hinglish Q&A & Viva Doubts Guide
+## 7. Hinglish Q&A & Viva Doubts Guide
 
 Here are the exact answers to common viva questions and practical lab behavior:
 
@@ -292,7 +329,7 @@ Here are the exact answers to common viva questions and practical lab behavior:
 
 ---
 
-## 7. Reset / Clear Data Mechanism
+## 8. Reset / Clear Data Mechanism
 
 Jab aap Web Dashboard par **"Reset / Clear Data"** click karte hain ya `scripts/reset_lab.sh` run karte hain, system yeh 4 steps perform karta hai:
 
@@ -303,7 +340,7 @@ Jab aap Web Dashboard par **"Reset / Clear Data"** click karte hain ya `scripts/
 
 ---
 
-## 8. Folder Structure
+## 9. Folder Structure
 
 ```
 iotshield/
@@ -358,7 +395,7 @@ iotshield/
 
 ---
 
-## 9. Detailed Technical Viva Q&A (English)
+## 10. Detailed Technical Viva Q&A (English)
 
 ### Q: Why is the drop rule priority 200 while forwarding rules are priority 100?
 **Ans:** OpenFlow switches evaluate rules strictly by priority (highest priority first). If a malicious host starts sending packets after a forwarding rule (priority 100) was already installed, the drop rule (priority 200) will take precedence and immediately block the packet. Security enforcement rules must always supersede forwarding rules.

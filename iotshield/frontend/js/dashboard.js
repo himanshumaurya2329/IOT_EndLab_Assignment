@@ -43,15 +43,21 @@ class DashboardModule {
     if (typeof data.drop_rules    === 'number') this._counters.dropRules    = data.drop_rules;
 
     if (typeof data.detection_latency_ms === 'number') {
-      this._setEl('stat-latency', data.detection_latency_ms.toFixed(1) + ' ms');
+      const latStr = data.detection_latency_ms.toFixed(1) + ' ms';
+      this._setEl('stat-latency', latStr);
+      this._setEl('bench-detTime', latStr);
     } else {
       this._setEl('stat-latency', '—');
+      this._setEl('bench-detTime', '—');
     }
 
     if (typeof data.prevention_rate === 'number') {
-      this._setEl('stat-preventionRate', data.prevention_rate.toFixed(1) + '%');
+      const prevStr = data.prevention_rate.toFixed(1) + '%';
+      this._setEl('stat-preventionRate', prevStr);
+      this._setEl('bench-prevRate', prevStr);
     } else {
       this._setEl('stat-preventionRate', '100%');
+      this._setEl('bench-prevRate', '100.0%');
     }
 
     this._updateCards();
@@ -108,7 +114,9 @@ class DashboardModule {
       this._latencies.push(lat);
       if (this._latencies.length > 50) this._latencies.shift();
       const avg = this._latencies.reduce((a, b) => a + b, 0) / this._latencies.length;
-      this._setEl('stat-latency', avg.toFixed(1) + ' ms');
+      const latStr = avg.toFixed(1) + ' ms';
+      this._setEl('stat-latency', latStr);
+      this._setEl('bench-detTime', latStr);
     }
 
     this._updateCards();
@@ -192,6 +200,8 @@ class DashboardModule {
     this._attackCount = 0;
     this._setEl('stat-latency', '—');
     this._setEl('stat-preventionRate', '100%');
+    this._setEl('bench-detTime', '—');
+    this._setEl('bench-prevRate', '100.0%');
     this._setNetworkStatus('healthy');
     this._updateCards();
     this.clearEvents();

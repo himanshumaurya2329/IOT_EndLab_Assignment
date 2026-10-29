@@ -66,10 +66,6 @@ sudo apt-get install -y \
     python3-pip \
     python3-venv \
     python3-dev \
-    python3-scapy \
-    python3-flask \
-    python3-requests \
-    python3-pytest \
     net-tools \
     iproute2 \
     iputils-ping \
@@ -117,7 +113,7 @@ If you prefer full manual control:
 
 #### 1. (Optional) Create and Activate Virtual Environment
 ```bash
-python3 -m venv --system-site-packages venv
+python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip setuptools wheel
 ```

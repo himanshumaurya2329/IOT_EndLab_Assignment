@@ -73,21 +73,21 @@ For the best live demonstration experience in front of the evaluator, open **3 t
 
 ### Terminal 1: Start the Entire Lab & Interactive Mininet CLI
 ```bash
-cd /path/to/IOT_EndLab_Assignment/iotshield  # (e.g. cd ~/IOT_EndLab_Assignment/iotshield)
+cd /mnt/c/Users/hmury/Desktop/IOT_EndLab_Assignment/iotshield
 sudo bash scripts/start_lab.sh
 ```
 *What happens:* OVS starts, Ryu controller starts, Flask backend starts, clean table-miss rule is verified, and you enter the `mininet>` prompt.
 
 ### Terminal 2: Human-Readable Ryu Controller Monitor
 ```bash
-cd /path/to/IOT_EndLab_Assignment/iotshield
+cd /mnt/c/Users/hmury/Desktop/IOT_EndLab_Assignment/iotshield
 python3 scripts/watch_ryu.py
 ```
 *What happens:* Shows clean, color-coded controller logs. All internal Python/eventlet deprecation warnings are automatically filtered out.
 
 ### Terminal 3: Formatted Security Event Stream
 ```bash
-cd /path/to/IOT_EndLab_Assignment/iotshield
+cd /mnt/c/Users/hmury/Desktop/IOT_EndLab_Assignment/iotshield
 python3 scripts/watch_events.py
 ```
 *What happens:* Formats `/tmp/iotshield_events.jsonl` into readable boxes: Safe traffic in green, ARP Spoofing alerts in high-visibility red boxes with fake vs real MAC.

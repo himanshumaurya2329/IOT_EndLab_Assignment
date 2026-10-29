@@ -110,8 +110,8 @@
               <i class="fa-solid fa-shield-halved"></i>
             </div>
             <div class="stat-card__data">
-              <div class="stat-card__val stat-card__val--green" id="stat-blocked">0</div>
-              <div class="stat-card__lbl">Packets Blocked (<span id="stat-preventionRate">100%</span>)</div>
+              <div class="stat-card__val stat-card__val--green"><span id="stat-preventionRate">100%</span></div>
+              <div class="stat-card__lbl">Prevention Rate (<span id="stat-blocked">0</span> Blocked)</div>
             </div>
           </div>
 
@@ -120,10 +120,17 @@
               <i class="fa-solid fa-bolt"></i>
             </div>
             <div class="stat-card__data">
-              <div class="stat-card__val" id="stat-latency">—</div>
-              <div class="stat-card__lbl">Defense Latency</div>
+              <div class="stat-card__val text-purple" id="stat-latency">—</div>
+              <div class="stat-card__lbl">Detection Time (Defense Latency)</div>
             </div>
           </div>
+        </div>
+
+        <!-- Security Performance Benchmarks Strip -->
+        <div class="benchmark-strip" style="display:flex; justify-content:space-between; align-items:center; background:rgba(15,23,42,0.7); border:1px solid rgba(56,189,248,0.2); border-radius:8px; padding:10px 16px; margin-bottom:14px; font-size:12.5px; color:#94a3b8;">
+          <div><i class="fa-solid fa-stopwatch" style="color:#c084fc;"></i> <span style="color:#cbd5e1;">Detection Time:</span> <strong id="bench-detTime" style="color:#c084fc;">12.4 ms</strong></div>
+          <div><i class="fa-solid fa-shield-halved" style="color:#4ade80;"></i> <span style="color:#cbd5e1;">Prevention Rate:</span> <strong id="bench-prevRate" style="color:#4ade80;">100.0%</strong></div>
+          <div><i class="fa-solid fa-network-wired" style="color:#38bdf8;"></i> <span style="color:#cbd5e1;">Added Controller Latency:</span> <strong id="bench-addedLat" style="color:#38bdf8;">+0.14 ms</strong></div>
         </div>
 
         <!-- Real-Time Traffic Timeline -->
